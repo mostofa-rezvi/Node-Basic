@@ -1,6 +1,6 @@
 import userModel from "../models/userModel.js";
 
-export const registerController = async (req, res) => {
+export const registerController = async (req, res, next) => {
   try {
     console.log("Request Body:", req.body);
 
@@ -8,27 +8,35 @@ export const registerController = async (req, res) => {
 
     //validate
     if (!name) {
-      return res
-        .status(400)
-        .send({ success: false, message: "Please provide name." });
+      next("Name is Required.");
+
+      // return res
+      //   .status(400)
+      //   .send({ success: false, message: "Please provide name." });
     }
     if (!email) {
-      return res
-        .status(400)
-        .send({ success: false, message: "Please provide email." });
+      next("Email is Required.");
+
+      // return res
+      //   .status(400)
+      //   .send({ success: false, message: "Please provide email." });
     }
     if (!password) {
-      return res
-        .status(400)
-        .send({ success: false, message: "Please provide password." });
+      next("Password is Required & greater than 4 character.");
+
+      // return res
+      //   .status(400)
+      //   .send({ success: false, message: "Please provide password." });
     }
 
     const exisitingUser = await userModel.findOne({ email });
     if (exisitingUser) {
-      return res.status(200).send({
-        success: false,
-        message: "Email Already Register, Please Login.",
-      });
+      next("Email Already Register, Please Login.");
+
+      // return res.status(200).send({
+      //   success: false,
+      //   message: "Email Already Register, Please Login.",
+      // });
     }
 
     const user = await userModel.create({ name, email, password });
@@ -38,11 +46,13 @@ export const registerController = async (req, res) => {
       user,
     });
   } catch (error) {
-    console.log(error);
-    res.status(400).send({
-      message: "Error in register controller.",
-      success: false,
-      error,
-    });
+    next(error);
+
+    // console.log(error);
+    // res.status(400).send({
+    //   message: "Error in register controller.",
+    //   success: false,
+    //   error,
+    // });
   }
 };
