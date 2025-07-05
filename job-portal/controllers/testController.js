@@ -3,4 +3,4 @@ export const testPostController = (req, res) => {
   res.status(200).send(`Your name is ${name}`);
 };
 
-// export default { testPostController };
+export default { testPostController };
