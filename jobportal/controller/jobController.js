@@ -1,6 +1,6 @@
 import jobModel from "../models/jobModel.js";
 
-// Create Job
+// ====== Create Job
 export const createJobsController = async (req, res, next) => {
   const { company, position } = req.body;
   if (!company || !position) {
@@ -13,5 +13,13 @@ export const createJobsController = async (req, res, next) => {
   res.status(201).json({ success: true, job });
 };
 
-// All Jobs
-export const getAllJobController = () => {};
+// ====== All Jobs
+export const getAllJobController = async (req, res, next) => {
+  req.body.createdBy = req.user.userId;
+
+  const jobs = await jobModel.find({ createdBy: req.user.userId });
+  res.status(200).json({
+    totalJobs: jobs.length,
+    jobs,
+  });
+};
