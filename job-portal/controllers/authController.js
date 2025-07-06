@@ -1,34 +1,22 @@
 import userModel from "../models/userModel.js";
 
+// Register User
 export const registerController = async (req, res, next) => {
-  console.log("Request Body:", req.body);
-
   const { name, email, password } = req.body;
 
-  //validate
-  if (!name) {
-    next("Name is Required.");
-  }
-  if (!email) {
-    next("Email is Required.");
-  }
-  if (!password) {
-    next("Password is Required & greater than 4 character.");
+  if (!name || !email || !password) {
+    return next("Name, email, and password are required.");
   }
 
-  const exisitingUser = await userModel.findOne({ email });
-  if (exisitingUser) {
-    next("Email Already Register, Please Login.");
-  }
+  const existingUser = await userModel.findOne({ email });
+  if (existingUser) return next("Email already registered. Please login.");
 
   const user = await userModel.create({ name, email, password });
-
-  // token
   const token = user.createJWT();
 
-  res.status(201).send({
+  res.status(201).json({
     success: true,
-    message: "User Created Successfully.",
+    message: "User registered successfully.",
     user: {
       name: user.name,
       lastName: user.lastName,
@@ -39,33 +27,26 @@ export const registerController = async (req, res, next) => {
   });
 };
 
+// Login User
 export const loginController = async (req, res, next) => {
   const { email, password } = req.body;
 
-  //validation
-  if (!email || !password) {
-    return next("Please provide all fields.");
-  }
+  if (!email || !password) return next("Please provide all fields.");
 
-  // find user by email
   const user = await userModel.findOne({ email }).select("+password");
-  if (!user) {
-    return next("Invalid Username or Password");
-  }
+  if (!user) return next("Invalid email or password.");
 
-  // compare password
   const isMatch = await user.comparePassword(password);
-  if (!isMatch) {
-    return next("Invalid Username or Password");
-  }
+  if (!isMatch) return next("Invalid email or password.");
 
   const token = user.createJWT();
 
   res.status(200).json({
     success: true,
-    message: "Login Successful",
+    message: "Login successful.",
     user: {
       name: user.name,
+      lastName: user.lastName,
       email: user.email,
       location: user.location,
     },

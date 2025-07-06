@@ -1,48 +1,44 @@
-// packages imports
 import express from "express";
-import "express-async-error";
+import "express-async-errors";
 import dotenv from "dotenv";
-import colors from "colors";
 import cors from "cors";
 import morgan from "morgan";
-// files imports
-import connectDB from "./config/db.js";
-// routes imports
-import testRoutes from "./routes/testRoutes.js";
-import authRoutes from "./routes/authRoutes.js";
-import errorMiddleware from "./middelwares/errorMiddleware.js";
-import userRoutes from "./routes/userRoutes.js";
+import colors from "colors";
 
-// config
+// File imports
+import connectDB from "./config/db.js";
+import authRoutes from "./routes/authRoutes.js";
+import jobsRoutes from "./routes/jobsRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import errorMiddleware from "../job-portal/middelwares/errorMiddleware.js";
+
+// Dotenv config
 dotenv.config();
 
-// mongoDB connection
+// Connect to MongoDB
 connectDB();
 
-// rest object
+// Express app
 const app = express();
 
-// middlewares
+// Middlewares
 app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(morgan("dev"));
 
-// routes
-app.use("/api/v1/test", testRoutes);
+// API Routes
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/jobs", jobsRoutes);
 app.use("/api/v1/user", userRoutes);
 
-// validation middelware
+// Global error handler
 app.use(errorMiddleware);
 
-// port
+// Port
 const PORT = process.env.PORT || 5050;
-const DEV = process.env.DEV_MODE;
+const MODE = process.env.DEV_MODE;
 
-// listen
+// Start server
 app.listen(PORT, () => {
-  console.log(
-    `Node Server Running in ${DEV} mode on Port Number: ${PORT}`.bgYellow.black
-  );
+  console.log(`Server running in ${MODE} mode on port ${PORT}`.bgYellow.black);
 });

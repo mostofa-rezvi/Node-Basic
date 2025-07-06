@@ -3,26 +3,26 @@ import validator from "validator";
 import bcrypt from "bcryptjs";
 import JWT from "jsonwebtoken";
 
-// schema
+// Define user schema
 const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "Name is Require."],
+      required: [true, "Name is required."],
     },
     lastName: {
       type: String,
     },
     email: {
       type: String,
-      required: [true, "Email is Require."],
+      required: [true, "Email is required."],
       unique: true,
       validate: validator.isEmail,
     },
     password: {
       type: String,
-      required: [true, "Password is Require."],
-      minlength: [4, "Password length should be greater than 4 character."],
+      required: [true, "Password is required."],
+      minlength: [4, "Password must be at least 4 characters."],
       select: true,
     },
     location: {
@@ -33,20 +33,19 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Middlewares
+// Hash password before saving
 userSchema.pre("save", async function () {
-  if (!this.isModified) return;
+  if (!this.isModified("password")) return;
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-// compare password
+// Compare password method
 userSchema.methods.comparePassword = async function (userPassword) {
-  const isMatch = await bcrypt.compare(userPassword, this.password);
-  return isMatch;
+  return await bcrypt.compare(userPassword, this.password);
 };
 
-// JSON web token
+// Create JWT method
 userSchema.methods.createJWT = function () {
   return JWT.sign({ userId: this._id }, process.env.JWT_SECRET, {
     expiresIn: "1d",
