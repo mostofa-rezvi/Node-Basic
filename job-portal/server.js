@@ -7,10 +7,10 @@ import colors from "colors";
 
 // File imports
 import connectDB from "./config/db.js";
-import authRoutes from "./routes/authRoutes.js";
-import jobsRoutes from "./routes/jobsRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
-import errorMiddleware from "../job-portal/middelwares/errorMiddleware.js";
+import authRoute from "./route/authRoute.js";
+import jobRoute from "./route/jobRoute.js";
+import userRoute from "./route/userRoute.js";
+import errorMiddleware from "../job-portal/middleware/errorMiddleware.js";
 
 // Dotenv config
 dotenv.config();
@@ -27,9 +27,9 @@ app.use(cors());
 app.use(morgan("dev"));
 
 // API Routes
-app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/jobs", jobsRoutes);
-app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/job", jobRoute);
+app.use("/api/v1/user", userRoute);
 
 // Global error handler
 app.use(errorMiddleware);

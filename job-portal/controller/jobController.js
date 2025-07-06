@@ -1,7 +1,7 @@
 import jobsModel from "../model/jobModel.js";
 
 // Create Job
-export const createJobsController = async (req, res, next) => {
+const createJobController = async (req, res, next) => {
   const { company, position } = req.body;
   if (!company || !position) {
     return next("Company and position are required.");
@@ -12,3 +12,5 @@ export const createJobsController = async (req, res, next) => {
 
   res.status(201).json({ success: true, job });
 };
+
+export default createJobController;
