@@ -3,6 +3,7 @@ import userAuth from "../middleware/authMiddleware.js";
 import {
   createJobsController,
   getAllJobController,
+  updateJobController,
 } from "../controller/jobController.js";
 
 const router = express.Router();
@@ -13,5 +14,8 @@ router.post("/create-job", userAuth, createJobsController);
 
 // All Jobs || GET
 router.get("/get-job", userAuth, getAllJobController);
+
+// Update Jobs || PUT || PATCH
+router.patch("/update-job/:id", userAuth, updateJobController);
 
 export default router;
