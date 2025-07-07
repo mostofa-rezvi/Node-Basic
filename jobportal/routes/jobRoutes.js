@@ -4,6 +4,7 @@ import {
   createJobsController,
   deleteJobController,
   getAllJobController,
+  jobStatsController,
   updateJobController,
 } from "../controller/jobController.js";
 // import jobModel from "../models/jobModel.js";
@@ -22,6 +23,17 @@ router.patch("/update-job/:id", userAuth, updateJobController);
 
 // Delete Job || DELETE
 router.delete("/delete-job/:id", userAuth, deleteJobController);
+
+// Job Stats Filter || GET
+router.get("/job-stats", userAuth, jobStatsController);
+
+export default router;
+
+//
+//
+//
+//
+//
 
 // Bulk Insert Jobs || POST
 // router.post("/bulk-insert", userAuth, async (req, res, next) => {
@@ -45,5 +57,3 @@ router.delete("/delete-job/:id", userAuth, deleteJobController);
 //     next(error);
 //   }
 // });
-
-export default router;
