@@ -42,9 +42,10 @@ export const updateJobController = async (req, res, next) => {
   }
 
   // Authorization check
-  // if (req.user.userId !== job.createdBy.toString()) {
-  //   return next("You are not authorized to update this job.");
-  // }
+  if (!req.user.userId !== job.createdBy.toString()) {
+    next("You are not authorized to update this job.");
+    return;
+  }
 
   const updatedJob = await jobModel.findOneAndUpdate({ _id: id }, req.body, {
     new: true,
@@ -52,4 +53,24 @@ export const updateJobController = async (req, res, next) => {
   });
 
   res.status(200).json({ success: true, job: updatedJob });
+};
+
+// ====== Delete Job
+export const deleteJobController = async (req, res, next) => {
+  const { id } = req.params;
+
+  // find job
+  const job = await jobModel.findOne({ _id: id });
+
+  // validation
+  if (!job) {
+    next(`No job found with this id: ${id}`);
+  }
+
+  if (req.user.userId !== job.createdBy.toString()) {
+    return next("You are not authorized to delete this job.");
+  }
+
+  await job.deleteOne();
+  res.status(200).json({ message: "Success, Job info deleted!" });
 };
